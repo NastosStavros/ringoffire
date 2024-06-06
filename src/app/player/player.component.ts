@@ -10,5 +10,6 @@ import { CommonModule } from '@angular/common';
   styleUrl: './player.component.scss'
 })
 export class PlayerComponent {
-@Input() name!:string;
+  @Input() name!: string;
+  @Input() playerActive: boolean = false;
 }
