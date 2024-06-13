@@ -19,7 +19,7 @@ import { GameInfoComponent } from '../game-info/game-info.component';
 })
 export class GameComponent implements OnInit {
   pickCardAnimation = false;
-  currentCard: string | undefined = '';
+  currentCard = '';
   game!: Game;
   constructor(public dialog: MatDialog) {
 
@@ -37,17 +37,22 @@ export class GameComponent implements OnInit {
 
   takeCard() {
     if (!this.pickCardAnimation) {
-      this.currentCard = this.game.stack.pop();
-      console.log(this.currentCard);
-      this.pickCardAnimation = true;
+      const card = this.game.stack.pop();
+      if (card !== undefined) {
+        this.currentCard = card;
+        console.log(this.currentCard);
+        this.pickCardAnimation = true;
 
-      setTimeout(() => {
-        if (this.currentCard) { // Sicherstellen, dass currentCard nicht undefined ist
-          this.game.playedCards.push(this.currentCard);
-          console.log(this.game);
-        }
-        this.pickCardAnimation = false;
-      }, 1250);
+        this.game.currentPlayer = (this.game.currentPlayer + 1) % this.game.players.length;
+
+        setTimeout(() => {
+          if (this.currentCard) { // Sicherstellen, dass currentCard nicht undefined ist
+            this.game.playedCards.push(this.currentCard);
+            console.log(this.game);
+          }
+          this.pickCardAnimation = false;
+        }, 1250);
+      }
     }
   }
 
@@ -55,7 +60,7 @@ export class GameComponent implements OnInit {
     const dialogRef = this.dialog.open(DialogAddPlayerComponent);
 
     dialogRef.afterClosed().subscribe(name => {
-      if (name) {
+      if (name && name.length > 0) {
         this.game.players.push(name);
       }
     });
